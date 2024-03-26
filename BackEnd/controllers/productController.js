@@ -52,10 +52,16 @@ exports.getProductDetails = catchAsyncError (async (req, res, next) => {
     });
 
 });
+
+
 //Update Product --admin
 
 exports.updateProduct = catchAsyncError (async (req, res, next) => {
-    let product = Product.findById(req.params.id);
+
+    if (!req.headers['authorization']) {
+        return next(new ErrorHandler("Authorization header is missing", 401));
+    }
+    let product = await Product.findById(req.params.id);
 
     if (!product) {
         return next(new ErrorHandler("Product not found", 404));
